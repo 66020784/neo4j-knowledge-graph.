@@ -1,0 +1,118 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neo4j Knowledge Graph</title>
+
+    <!-- ไลบรารีสำหรับแสดงกราฟ -->
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f6f9;
+            color: #222;
+        }
+
+        header {
+            background: #008f83;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        #network {
+            width: 95%;
+            height: 70vh;
+            margin: 20px auto;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+
+        #info {
+            text-align: center;
+            padding: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Neo4j Knowledge Graph</h1>
+        <p>กราฟแสดงโหนดและความสัมพันธ์ของข้อมูล</p>
+    </header>
+
+    <div id="info">
+        คลิกที่โหนดเพื่อดูข้อมูล และลากหรือซูมเพื่อสำรวจกราฟ
+    </div>
+
+    <div id="network"></div>
+
+    <script>
+        // ข้อมูลตัวอย่าง สามารถเปลี่ยนเป็นข้อมูลจริงได้
+        const nodes = new vis.DataSet([
+            { id: 1, label: "Digital Literacy", group: 1 },
+            { id: 2, label: "Information Skills", group: 2 },
+            { id: 3, label: "Digital Skills", group: 2 },
+            { id: 4, label: "Career Readiness", group: 3 },
+            { id: 5, label: "University Students", group: 3 }
+        ]);
+
+        const edges = new vis.DataSet([
+            { from: 1, to: 2, label: "includes" },
+            { from: 1, to: 3, label: "develops" },
+            { from: 2, to: 4, label: "supports" },
+            { from: 3, to: 4, label: "supports" },
+            { from: 5, to: 1, label: "learn" }
+        ]);
+
+        const container = document.getElementById("network");
+
+        const data = {
+            nodes: nodes,
+            edges: edges
+        };
+
+        const options = {
+            nodes: {
+                shape: "dot",
+                size: 22,
+                font: { size: 16 },
+                borderWidth: 2
+            },
+            edges: {
+                arrows: { to: { enabled: true } },
+                font: { size: 12, align: "middle" },
+                smooth: { type: "dynamic" }
+            },
+            physics: {
+                stabilization: true
+            },
+            interaction: {
+                hover: true,
+                navigationButtons: true,
+                zoomView: true
+            },
+            groups: {
+                1: { color: "#60a5fa" },
+                2: { color: "#34d399" },
+                3: { color: "#fbbf24" }
+            }
+        };
+
+        const network = new vis.Network(container, data, options);
+
+        network.on("click", function (params) {
+            if (params.nodes.length > 0) {
+                const node = nodes.get(params.nodes[0]);
+                document.getElementById("info").textContent =
+                    "ข้อมูลที่เลือก: " + node.label;
+            }
+        });
+    </script>
+</body>
+</html>
